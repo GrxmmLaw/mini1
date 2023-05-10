@@ -49,7 +49,7 @@ ListArr::~ListArr(){
  * El método size retorna el número total de elementos almacenados en un ListArr.
  * 
  * @return El método 'size()' retorna el número total de elementos almacenados en un 'ListArr'.
- * Este valor se obtiene desde la variable 'total_size' del objeto 'summary_head'.
+ * Este valor se obtiene desde la total_size de summary_head.
  */
 int ListArr::size(){ //Cantidad de elementos almacenados en LisArr
 	return summary_head->total_size;
@@ -95,7 +95,7 @@ void ListArr::insert(int v, int i){
 				aux = aux->right_child;
 			}                                                                                                     
 		}
-		//En que nodo realizar la inserción
+		//En que nodo realizar la insercion
 		Node* current;
 		if(i <=  aux->left->num_elements){
 			current = aux->left;
@@ -103,7 +103,7 @@ void ListArr::insert(int v, int i){
 			i = i - aux->left->num_elements;
 			current = aux->right;
 		}
-		//Si el nodo no está lleno, se inserta en la posición correspondiente
+		//Si el nodo no esta lleno, se inserta en la posicion correspondiente
 		if(current->num_elements < current->b){
 			for (int j = 0; j < current->num_elements-i ; j++){
 				current->arr[current->num_elements-j] = current->arr[current->num_elements-j-1];
@@ -132,7 +132,7 @@ void ListArr::insert(int v, int i){
 			}
 		}
 
-	//update_summary();
+	update_summary();
 		
 	}catch(const char* message){
         std::cerr << message << std::endl;
@@ -170,19 +170,26 @@ void ListArr::print(){
  * Si v está presente, la funcion retorna true, si no, retorna false.
  */
 bool ListArr::find(int v){
-	if(size() == 0){
-		return false;
-	}
-	Node *current = head;
-	while(current != nullptr){
-		for(int i=0; i<current->b; i++){
-			if(current->arr[i] == v){
-				return true;
-			}
-		}
-		current = current->next;
-	}
-	return false;
+	NodeSummary* current_summary = summary_head;
+    Node* current_node = nullptr;
+    while (current_summary != nullptr) {
+        if (v <= current_summary->total_size) {
+            current_node = current_summary->left;
+            break;
+        } else {
+            v -= current_summary->total_size;
+            current_summary = current_summary->right_child;
+        }
+    }
+    while (current_node != nullptr) {
+        for (int i = 0; i < current_node->num_elements; i++) {
+            if (current_node->arr[i] == v) {
+                return true;
+            }
+        }
+        current_node = current_node->next;
+    }
+    return false;
 }
 
 /**
